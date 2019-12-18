@@ -24,6 +24,7 @@ async function executeRequest() {
     pageNo++;
   } catch (error) {
     console.log(error);
+    errorHandler(error);
   }
 
   while (next != null) {
@@ -42,7 +43,8 @@ async function executeRequest() {
       next = $("a.next");
       pageNo++;
     } catch (error) {
-      console.log(error);
+      errorHandler(error);
+      // console.log(error);
     }
   }
 }
@@ -64,8 +66,20 @@ async function collectDescriptions(links) {
         console.log(announcementDescription);
       }
     } catch (error) {
-      console.log(error);
+      errorHandler(error);
+      // console.log(error);
     }
+  }
+}
+
+function errorHandler(error) {
+  if (error.error) {
+    const $ = cheerio.load(error.error);
+    const img = $("img").attr(
+      "src",
+      "https://autoplius.lt/utility/captcha/text"
+    );
+    console.log(img[0]);
   }
 }
 
