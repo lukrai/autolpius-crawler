@@ -31,3 +31,18 @@ export const matchCarModel = (model: string | undefined) => {
 
   return model.trim();
 };
+
+export const convertPriceTextToNumber = (priceText: string) => {
+  if (!priceText) {
+    return 0;
+  }
+  const priceTextSplit = priceText.split("€");
+  if (priceTextSplit[0]) {
+    const priceTextNumber = Number(priceTextSplit[0].replace(/[^0-9]/g, ""));
+    if (priceText.includes("muitas")) {
+      return Math.floor(priceTextNumber * 1.21);
+    }
+    return priceTextNumber;
+  }
+  return 0;
+};

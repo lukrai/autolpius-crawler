@@ -1,6 +1,7 @@
 // For more information, see https://crawlee.dev/
 import { CheerioCrawler, ProxyConfiguration, log, Dataset } from "crawlee";
 import { router } from "./routes.js";
+import { matchCarModel, convertPriceTextToNumber } from "./carModels.js";
 
 // const startUrls = ['https://crawlee.dev'];
 
@@ -18,7 +19,13 @@ const crawler = new CheerioCrawler({
     // log.info(`Processing ${request.url}...`);
     const title = $("title").text();
     const announcements = $(".announcement-body");
-    const carDataPromises: Promise<void>[] = [];
+    const parsedCarData: {
+      url: string;
+      priceText: number;
+      dateOfProduction: string;
+      carModel: string;
+      dateCreated: Date;
+    }[] = [];
     announcements.each((_i, announcement) => {
       announcement;
       const priceText = $(announcement)
@@ -30,26 +37,32 @@ const crawler = new CheerioCrawler({
         .text()
         .trim();
 
-        const carModel = $(announcement)
+      const carModel = $(announcement)
         .find("div.announcement-title-container > div.announcement-title")
         .text()
         .trim();
-        // #autoplius > div.container > div.small-wrapper > div.content-wrapper > div.content > div.cntnt-box-fixed > div.col-2 > div.auto-lists.lt > a:nth-child(13) > div > div.announcement-body > div.announcement-body-heading > div.announcement-title-container > div.announcement-title
-        // #autoplius > div.container > div.small-wrapper > div.content-wrapper > div.content > div.cntnt-box-fixed > div.col-2 > div.auto-lists.lt > a:nth-child(13) > div > div.announcement-body > div.announcement-body-heading > div.announcement-title-container > div.announcement-title-parameters > div > span:nth-child(1)
-        // .('.announcement-pricing-info').text().trim();
-      log.info(JSON.stringify({ priceText, dateOfProduction }));
+      const carId = $(announcement)
+        .find(".announcement-comment-hidden")
+        .attr("data-id");
+      // #autoplius > div.container > div.small-wrapper > div.content-wrapper > div.content > div.cntnt-box-fixed > div.col-2 > div.auto-lists.lt > a:nth-child(13) > div > div.announcement-body > div.announcement-body-heading > div.announcement-title-container > div.announcement-title
+      // #autoplius > div.container > div.small-wrapper > div.content-wrapper > div.content > div.cntnt-box-fixed > div.col-2 > div.auto-lists.lt > a:nth-child(13) > div > div.announcement-body > div.announcement-body-heading > div.announcement-title-container > div.announcement-title-parameters > div > span:nth-child(1)
+      // .('.announcement-pricing-info').text().trim();
+      log.info(JSON.stringify({ priceText, dateOfProduction, carModel, carId }));
 
-      const results = {
-        url: request.url,
-        priceText,
-        dateOfProduction,
-        carModel,
-        dateCreated: new Date(),
-      };
+      if (carModel) {
+        const results = {
+          url: request.url,
+          priceText: convertPriceTextToNumber(priceText),
+          carId,
+          dateOfProduction,
+          carModel: matchCarModel(carModel),
+          dateCreated: new Date(),
+        };
 
-      carDataPromises.push(Dataset.pushData(results));
+        parsedCarData.push(results);
+      }
     });
-    await Promise.all(carDataPromises);
+    await Dataset.pushData({ results: parsedCarData });
 
     console.log(`The title of "${request.url}" is: ${title}.`);
 
