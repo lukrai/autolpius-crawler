@@ -7,16 +7,20 @@ import { matchCarModel, convertPriceTextToNumber } from "./carModels.js";
 
 // const startUrls = ['https://autoplius.lt/skelbimai/naudoti-automobiliai?make_date_from=&make_date_to=2022&sell_price_from=&sell_price_to=&engine_capacity_from=&engine_capacity_to=&power_from=&power_to=&kilometrage_from=&kilometrage_to=&qt=&qt_autocomplete=&has_damaged_id=10924&category_id=2&make_id_list=44&make_id%5B44%5D=253_279&slist=2032916153&page_nr=1'];
 const startUrls = [
-  "https://autoplius.lt/skelbimai/naudoti-automobiliai?make_date_from=&make_date_to=2022&&has_damaged_id=10924&category_id=2&make_id_list=44&make_id%5B44%5D=253_279&slist=2032916153&page_nr=1",
+  "https://autoplius.lt/skelbimai/naudoti-automobiliai?make_date_from=&make_date_to=2022&has_damaged_id=10924&category_id=2&make_id_list=44&make_id%5B44%5D=253_279&slist=2032916153&page_nr=1", // Toyota Corrola/Auris
+  "https://autoplius.lt/skelbimai/naudoti-automobiliai?make_date_from=&make_date_to=2022&has_damaged_id=10924&category_id=2&make_id_list=43&make_id%5B43%5D=193&slist=2056726079&page_nr=1", // VW Golf
+  "https://autoplius.lt/skelbimai/naudoti-automobiliai?make_date_from=&make_date_to=2022&has_damaged_id=10924&category_id=2&make_id_list=43&make_id%5B43%5D=193&slist=2056726079&page_nr=1", // Mercedes-Benz C
+  "https://autoplius.lt/skelbimai/naudoti-automobiliai?make_date_from=&make_date_to=2022&has_damaged_id=10924&category_id=2&make_id_list=99&make_id%5B43%5D=1340&slist=2056726079&page_nr=1", // Audi A4
+  "https://autoplius.lt/skelbimai/naudoti-automobiliai?make_date_from=&make_date_to=2022&has_damaged_id=10924&category_id=2&make_id_list=97&make_id%5B43%5D=1319&slist=2056726079&page_nr=1", // BMW 3
+  "https://autoplius.lt/skelbimai/naudoti-automobiliai?make_date_from=&make_date_to=2022&has_damaged_id=10924&category_id=2&make_id_list=44&make_id%5B43%5D=221&slist=2056726079&page_nr=1" // Toyota Rav4
 ];
 
 const crawler = new CheerioCrawler({
-  maxRequestsPerCrawl: 20,
+  maxRequestsPerMinute: 300,
   // proxyConfiguration: new ProxyConfiguration({ proxyUrls: ['...'] }),
   // requestHandler: router,
 
   async requestHandler({ $, request, enqueueLinks }) {
-    // log.info(`Processing ${request.url}...`);
     const title = $("title").text();
     const announcements = $(".announcement-body");
     const parsedCarData: {

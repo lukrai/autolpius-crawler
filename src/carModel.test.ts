@@ -17,6 +17,33 @@ describe("matchCarModel file", () => {
       expect(result).toEqual("Volkswagen Passat");
     });
 
+    it("should match Mercedes-Benz C200 to Mercedes-Benz C", () => {
+      expect(matchCarModel("Mercedes-Benz C200")).toEqual(
+        "Mercedes-Benz C Class"
+      );
+      expect(matchCarModel("Mercedes-Benz C240")).toEqual(
+        "Mercedes-Benz C Class"
+      );
+      expect(matchCarModel("Mercedes-Benz C63 AMG")).toEqual(
+        "Mercedes-Benz C63 AMG"
+      );
+    });
+
+    it("should match Audi A4 to Audi A4", () => {
+      expect(matchCarModel("Audi A4")).toEqual("Audi A4");
+    });
+
+    it("should match Toyota RAV4 to Toyota RAV4", () => {
+      expect(matchCarModel("Toyota RAV4")).toEqual("Toyota RAV4");
+    });
+
+    it("should match BMW 3 to BMW 3 series", () => {
+      expect(matchCarModel("BMW 320")).toEqual("BMW 3 Series");
+      expect(matchCarModel("BMW 320i")).toEqual("BMW 3 Series");
+      expect(matchCarModel("BMW 330")).toEqual("BMW 3 Series");
+      expect(matchCarModel("BMW 330 GT")).toEqual("BMW 3 Series");
+    });
+
     it("should return passed model if not matched", () => {
       const result = matchCarModel("Some car maker");
       expect(result).toEqual("Some car maker");
@@ -37,12 +64,20 @@ describe("matchCarModel file", () => {
   describe("convertPriceTextToNumber", () => {
     it("should convert price text to number", () => {
       expect(convertPriceTextToNumber("13 399 €")).toEqual(13399);
-      expect(convertPriceTextToNumber("13 399 €\n                \n                            \n\n        \n\n\n        \n            \n                            \n                    13 200 € eksportui")).toEqual(13399);
+      expect(
+        convertPriceTextToNumber(
+          "13 399 €\n                \n                            \n\n        \n\n\n        \n            \n                            \n                    13 200 € eksportui"
+        )
+      ).toEqual(13399);
       expect(convertPriceTextToNumber("")).toEqual(0);
       expect(convertPriceTextToNumber(undefined as any)).toEqual(0);
-      expect(convertPriceTextToNumber('22 222' as any)).toEqual(22222);
-      expect(convertPriceTextToNumber('22 222 € + something' as any)).toEqual(22222);
-      expect(convertPriceTextToNumber('22 222 € + muitas' as any)).toEqual(26888);
+      expect(convertPriceTextToNumber("22 222" as any)).toEqual(22222);
+      expect(convertPriceTextToNumber("22 222 € + something" as any)).toEqual(
+        22222
+      );
+      expect(convertPriceTextToNumber("22 222 € + muitas" as any)).toEqual(
+        26888
+      );
     });
-});
+  });
 });
